@@ -7,9 +7,14 @@ import {
 } from "@remix-run/react";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
-import { LiveReload } from "@remix-run/react";
+import "./styles/global.css";
+import "./styles/theme.css";
 
 export const links: LinksFunction = () => [
+  {
+    rel: "stylesheet",
+    href: "fonts/fonts.css",
+  },
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 ];
 
