@@ -3,5 +3,6 @@ import {vars} from './theme.css'
 
 globalStyle('html, body', {
   margin: 0,
-  color: vars.color.text
+  color: vars.color.text,
+  fontFamily: 'Inter'
 });
