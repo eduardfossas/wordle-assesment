@@ -9,6 +9,3 @@ export const feedbackContainer = style({
   justifyContent: "center"
 });
 
-export const feedbackText = style({
-    
-});

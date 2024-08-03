@@ -1,6 +1,6 @@
 import { style, styleVariants, keyframes } from "@vanilla-extract/css";
 import { layoutToCss, layoutToCssMobile } from "app/utils/styles";
-import {vars} from 'app/styles/theme.css'
+import {vars, PRIMARY_FONT} from 'app/styles/theme.css'
 import {createFocusState} from 'app/styles/tools.css'
 
 export const letterStyle = style({
@@ -21,7 +21,7 @@ export const letterStyle = style({
   position: 'relative',
   background: 'none',
   color: vars.color.text,
-  fontFamily: "Inter",
+  fontFamily: PRIMARY_FONT,
   textAlign: 'center',
   '@media': {
     'screen and (min-width: 768px)': {

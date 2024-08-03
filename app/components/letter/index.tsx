@@ -1,4 +1,12 @@
-import { FormEvent, KeyboardEventHandler, useRef, useState } from "react";
+import {
+  FormEvent,
+  KeyboardEventHandler,
+  RefObject,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+import { useKeyboard } from "react-aria";
 import {
   letterActive,
   letterInactive,
@@ -9,6 +17,8 @@ import { refToArray } from "app/utils/react";
 import { clsx } from "clsx";
 import { WORDS } from "data/words";
 import { clamp } from "app/utils/math";
+import { POPUP_TEXT } from "data/text";
+import { RowsArrayType, ArrayStringType } from "types/elements";
 
 const WORD_LENGTH = 5;
 const DAILY_WORD = "tendu";
@@ -20,25 +30,29 @@ const Letter = ({
   activeRow,
   feedbackRef,
   setActiveRow,
+  setPopup,
 }: {
-  rowsArray: any;
+  rowsArray: RowsArrayType;
   rowId: number;
   letterId: number;
   activeRow: number;
-  feedbackRef: any;
+  feedbackRef: RefObject<HTMLElement>;
   setActiveRow: any;
+  setPopup: any;
 }) => {
   const isActiveRow = rowId === activeRow;
-  let keyPressed = "";
 
-  const evaluateGuess = (arr: Array<string>) => {
-    const guessedLetters = [] as Array<string>;
+  const evaluateGuess = (arr: ArrayStringType) => {
+    const guessedLetters = [] as ArrayStringType;
+    const correctLeters = [] as ArrayStringType;
+
     arr.map((el, i) => {
       const currLetter = el.toLowerCase();
       const letterDiv = rowsArray.current[activeRow][i];
       if (currLetter === DAILY_WORD[i]) {
         letterDiv.classList.add(letterVariants.correct);
         guessedLetters.push(currLetter);
+        correctLeters.push(currLetter);
       } else if (
         DAILY_WORD.includes(currLetter) &&
         !guessedLetters.includes(currLetter)
@@ -49,11 +63,16 @@ const Letter = ({
         letterDiv.classList.add(letterVariants.incorrect);
       }
     });
+
+    if (correctLeters.length === 5) {
+      setPopup(POPUP_TEXT.WINNER);
+    }
   };
 
   const handleEnterKey = () => {
     let word = "";
-    let arr = [] as Array<string>;
+    let arr = [] as ArrayStringType;
+    if (!rowsArray.current) return;
 
     rowsArray.current[activeRow].map((element: HTMLInputElement) => {
       const letter = element.value;
@@ -62,59 +81,56 @@ const Letter = ({
     });
 
     if (word.length < WORD_LENGTH) {
-      feedbackRef.current.innerText = "The word is less than 5 characters long";
-      feedbackRef.current.focus();
+      feedbackRef.current!.innerText =
+        "The word is less than 5 characters long";
     } else {
       if (WORDS.includes(word.toLowerCase())) {
         evaluateGuess(arr);
         setActiveRow((prev: number) => prev + 1);
         if (activeRow === 4) {
-          alert("you lost");
+          setPopup(POPUP_TEXT.LOSER);
         }
         arr = [];
         rowsArray.current[activeRow + 1][0].click();
         rowsArray.current[activeRow + 1][0].focus();
       } else {
-        feedbackRef.current.innerText = "This is not a word";
+        feedbackRef.current!.innerText = "This is not a word";
       }
     }
   };
 
-  // this happens fisrt
-  const handleKeyDown = (event: any) => {
-    keyPressed = event.nativeEvent.key;
+  let { keyboardProps } = useKeyboard({
+    onKeyDown: (event: any) => {
+      let currKey = event.key;
 
-    if (keyPressed === "Enter") {
-      handleEnterKey();
-    } else if (keyPressed === "Backspace") {
-      feedbackRef.current.innerText = "";
-    } else if (keyPressed === "ArrowRight") {
-      event.preventDefault();
-      const num = clamp(letterId + 1, 0, 4);
-      rowsArray.current[rowId][num].focus();
-      rowsArray.current[rowId][num].select();
-    } else if (keyPressed === "ArrowLeft") {
-      event.preventDefault();
-      const num = clamp(letterId - 1, 0, 4);
-      rowsArray.current[rowId][num].focus();
-      rowsArray.current[rowId][num].select();
-    }
-  };
+      if (currKey === "Enter") {
+        handleEnterKey();
+      } else if (currKey === "Backspace") {
+        feedbackRef.current!.innerText = "";
+      }
+    },
+    onKeyUp: (event: any) => {
+      let currKey = event.key;
 
-  const handleOnInput = (event: any) => {
-    if (keyPressed !== "Backspace") {
-      const num = clamp(letterId + 1, 0, 4);
-      rowsArray.current[rowId][num].click();
-      rowsArray.current[rowId][num].focus();
-    }
-  };
+      if (currKey === "Enter") return;
+
+      if (currKey === "Backspace") {
+        const num = clamp(letterId - 1, 0, 4);
+        rowsArray.current[rowId][num].focus();
+        rowsArray.current[rowId][num].select();
+      } else if (currKey !== "Tab") {
+        const num = clamp(letterId + 1, 0, 4);
+        rowsArray.current[rowId][num].focus();
+        rowsArray.current[rowId][num].select();
+      }
+    },
+  });
 
   return (
     <div className={clsx(letterInactive, { [letterActive]: isActiveRow })}>
       <input
         className={letterStyle}
-        onInput={handleOnInput}
-        onKeyDown={handleKeyDown}
+        {...keyboardProps}
         type="text"
         minLength={1}
         pattern="[A-Za-z]+"
