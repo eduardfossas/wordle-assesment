@@ -1,12 +1,36 @@
 import { Letter } from "app/components/letter";
 import { wordStyle } from "./styles.css";
+import { RefObject } from "react";
 
-const Word = ({ rowsArray, rowId }: { rowsArray: any; rowId: number }) => {
-  const words = [1, 2, 3, 4, 5];
+const Word = ({
+  rowsArray,
+  rowId,
+  activeRow,
+  feedbackRef,
+  setActiveRow,
+  setPopup,
+}: {
+  rowsArray: any;
+  rowId: number;
+  activeRow: number;
+  feedbackRef: RefObject<HTMLDivElement>;
+  setActiveRow: any;
+  setPopup: any;
+}) => {
+  const words = new Array(5).fill("");
   return (
-    <div className={wordStyle}>
+    <div className={wordStyle} tabIndex={rowId !== activeRow ? -1 : 0}>
       {words.map((_, key) => (
-        <Letter rowsArray={rowsArray} rowId={rowId} key={key} />
+        <Letter
+          setPopup={setPopup}
+          setActiveRow={setActiveRow}
+          feedbackRef={feedbackRef}
+          activeRow={activeRow}
+          rowsArray={rowsArray}
+          rowId={rowId}
+          letterId={key}
+          key={key}
+        />
       ))}
     </div>
   );

@@ -1,11 +1,14 @@
 import { style, styleVariants, keyframes } from "@vanilla-extract/css";
-import { layoutToCss } from "app/utils/styles";
-import {vars} from 'app/styles/theme.css'
+import { layoutToCss, layoutToCssMobile } from "app/utils/styles";
+import {vars, PRIMARY_FONT} from 'app/styles/theme.css'
 import {createFocusState} from 'app/styles/tools.css'
 
 export const letterStyle = style({
   border: `2px solid ${vars.color.incorrect}`,
-  height: `${layoutToCss(60)}vw`,
+  height: `${layoutToCssMobile(60)}vw`,
+  padding: `${layoutToCssMobile(15)}vw`,
+  fontSize: `${layoutToCssMobile(24)}vw`,
+  boxSizing: 'border-box',
   minWidth: 60,
   minHeight: 60,
   textTransform: "uppercase",
@@ -14,10 +17,23 @@ export const letterStyle = style({
   alignItems: "center",
   borderRadius: 4,
   aspectRatio: "1",
-  fontSize: `${layoutToCss(32)}vw`,
   fontWeight: "700",
   position: 'relative',
+  background: 'none',
+  color: vars.color.text,
+  fontFamily: PRIMARY_FONT,
+  textAlign: 'center',
+  '@media': {
+    'screen and (min-width: 768px)': {
+      height: `${layoutToCss(60)}vw`,
+      padding: `${layoutToCss(15)}vw`,
+      fontSize: `${layoutToCss(24)}vw`,
+    }
+  },
 });
+
+export const letterInactive = style({pointerEvents: 'none'})
+export const letterActive = style({pointerEvents: 'all'})
 
 export const letterVariants = styleVariants({
   active: { borderColor: vars.color.text},
