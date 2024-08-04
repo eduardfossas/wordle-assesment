@@ -95,6 +95,7 @@ const Letter = ({
         }
         arr = [];
         activeLetter(0, activeRow + 1);
+        feedbackRef.current?.classList.remove(feedbackTextVariants.visible);
       } else {
         feedbackRef.current!.innerText = "This is not a word";
         feedbackRef.current?.classList.add(feedbackTextVariants.visible);
@@ -147,7 +148,6 @@ const Letter = ({
         {...keyboardProps}
         type="text"
         minLength={1}
-        pattern="[A-Za-z]+"
         maxLength={1}
         tabIndex={isActiveRow ? 0 : -1}
         ref={(el) => {

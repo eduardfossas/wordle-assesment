@@ -5,7 +5,7 @@ import { appStyle } from "app/styles/app.css";
 import { Feedback } from "~/components/feedback";
 import { Dialog } from "~/components/dialog/dialog";
 import { DialogType } from "types/elements";
-import { stagger, animate } from "framer-motion";
+import { stagger, animate, AnimatePresence } from "framer-motion";
 import { letterVariants } from "app/components/letter/styles.css";
 import { RowsArrayType } from "types/elements";
 
@@ -72,7 +72,9 @@ export default function Index() {
         </div>
         <Feedback feedbackRef={feedbackRef} />
       </div>
-      <Dialog {...popUp} setPopup={setPopup} />
+      <AnimatePresence mode="wait">
+        {popUp?.icon && <Dialog {...popUp} setPopup={setPopup} />}
+      </AnimatePresence>
     </>
   );
 }
