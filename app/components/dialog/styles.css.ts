@@ -4,10 +4,11 @@ import { vars } from "app/styles/theme.css";
 export const dialogBackground = style({
   position: "fixed",
   inset: 0,
-  background: " rgb(0 0 0 / 50%)",
+  background: " rgba(0,0,0,0.5)",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  backdropFilter: 'blur(5px)'
 });
 
 export const dialogContainer = style({
@@ -40,11 +41,12 @@ export const dialogText = style({
 
 export const dialogButton = style({
     width: '100%',
-    background: "linear-gradient(0deg, #007AFF, #007AFF)",
+    background: "linear-gradient(0deg, #007AFF, #3995f9)",
     height: 32,
     padding: 0,
     border: 'none',
     borderRadius: 5,
     color: vars.color.text,
-    fontSize: 15
+    fontSize: 15,
+    cursor: 'pointer',
 })
