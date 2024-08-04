@@ -32,12 +32,13 @@ export const letterStyle = style({
   },
 });
 
-export const letterInactive = style({pointerEvents: 'none'})
-export const letterActive = style({pointerEvents: 'all'})
+export const letter = style({transformOrigin: 'bottom center'})
 
 export const letterVariants = styleVariants({
   active: { borderColor: vars.color.text},
-  correct: {backgroundColor: vars.color.correct, borderColor:vars.color.correct },
+  pointers: {pointerEvents: 'all'},
+  noPointers: {pointerEvents: 'none'},
+  correct: { backgroundColor: vars.color.correct, borderColor:vars.color.correct },
   incorrect: {backgroundColor: vars.color.incorrect, borderColor:vars.color.incorrect},
   misplaced: {backgroundColor: vars.color.misplaced, borderColor:vars.color.misplaced}
 });

@@ -40,7 +40,7 @@ export const dialogText = style({
 
 export const dialogButton = style({
     width: '100%',
-    background: "linear-gradient(0deg, #007AFF, #007AFF)",
+    background: "linear-gradient(0deg, #007AFF, #3995f9)",
     height: 32,
     padding: 0,
     border: 'none',

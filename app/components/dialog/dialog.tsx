@@ -14,7 +14,7 @@ const Dialog = ({
   title,
   text,
   setPopup,
-}: DialogType & { setPopup: any }) => {
+}: DialogType & { setPopup: Function }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   let timeout = useRef<ReturnType<typeof setTimeout>>();
 

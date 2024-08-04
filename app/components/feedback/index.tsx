@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { feedbackContainer } from "./styles.css";
+import { feedbackContainer, feedbackText } from "./styles.css";
 
 type Props = {
   feedbackRef: RefObject<HTMLDivElement>;
@@ -8,7 +8,7 @@ type Props = {
 const Feedback = ({ feedbackRef }: Props) => {
   return (
     <div className={feedbackContainer} role="alert">
-      <div ref={feedbackRef}></div>
+      <div className={feedbackText} ref={feedbackRef}></div>
     </div>
   );
 };

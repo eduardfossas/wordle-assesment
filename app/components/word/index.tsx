@@ -1,6 +1,16 @@
 import { Letter } from "app/components/letter";
 import { wordStyle } from "./styles.css";
 import { RefObject } from "react";
+import { RowsArrayTypeRef } from "types/elements";
+
+type Props = {
+  rowsArray: RowsArrayTypeRef;
+  rowId: number;
+  activeRow: number;
+  feedbackRef: RefObject<HTMLDivElement>;
+  setActiveRow: Function;
+  setPopup: Function;
+};
 
 const Word = ({
   rowsArray,
@@ -9,14 +19,7 @@ const Word = ({
   feedbackRef,
   setActiveRow,
   setPopup,
-}: {
-  rowsArray: any;
-  rowId: number;
-  activeRow: number;
-  feedbackRef: RefObject<HTMLDivElement>;
-  setActiveRow: any;
-  setPopup: any;
-}) => {
+}: Props) => {
   const words = new Array(5).fill("");
   return (
     <div className={wordStyle} tabIndex={rowId !== activeRow ? -1 : 0}>

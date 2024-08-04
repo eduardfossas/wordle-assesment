@@ -1,27 +1,29 @@
-import {
-  FormEvent,
-  KeyboardEventHandler,
-  RefObject,
-  useCallback,
-  useRef,
-  useState,
-} from "react";
+import { KeyboardEvent, RefObject } from "react";
 import { useKeyboard } from "react-aria";
-import {
-  letterActive,
-  letterInactive,
-  letterStyle,
-  letterVariants,
-} from "./styles.css";
+import { letterStyle, letterVariants, letter } from "./styles.css";
 import { refToArray } from "app/utils/react";
 import { clsx } from "clsx";
 import { WORDS } from "data/words";
 import { clamp } from "app/utils/math";
 import { POPUP_TEXT } from "data/text";
-import { RowsArrayType, ArrayStringType } from "types/elements";
+import {
+  RowsArrayType,
+  RowsArrayTypeRef,
+  ArrayStringType,
+} from "types/elements";
+import { animate, motion, useMotionValue } from "framer-motion";
+import { WORD_LENGTH, DAILY_WORD } from "constants/game";
+import { feedbackTextVariants } from "../feedback/styles.css";
 
-const WORD_LENGTH = 5;
-const DAILY_WORD = "tendu";
+type Props = {
+  rowsArray: RowsArrayTypeRef;
+  rowId: number;
+  letterId: number;
+  activeRow: number;
+  feedbackRef: RefObject<HTMLElement>;
+  setActiveRow: Function;
+  setPopup: Function;
+};
 
 const Letter = ({
   rowsArray,
@@ -31,16 +33,16 @@ const Letter = ({
   feedbackRef,
   setActiveRow,
   setPopup,
-}: {
-  rowsArray: RowsArrayType;
-  rowId: number;
-  letterId: number;
-  activeRow: number;
-  feedbackRef: RefObject<HTMLElement>;
-  setActiveRow: any;
-  setPopup: any;
-}) => {
+}: Props) => {
   const isActiveRow = rowId === activeRow;
+  const scale = useMotionValue(1);
+
+  const activeLetter = (number: number, rowId: number) => {
+    const num = clamp(number, 0, 4);
+    const row = clamp(rowId, 0, 4);
+    rowsArray.current![row][num].focus();
+    rowsArray.current![row][num].select();
+  };
 
   const evaluateGuess = (arr: ArrayStringType) => {
     const guessedLetters = [] as ArrayStringType;
@@ -48,7 +50,7 @@ const Letter = ({
 
     arr.map((el, i) => {
       const currLetter = el.toLowerCase();
-      const letterDiv = rowsArray.current[activeRow][i];
+      const letterDiv = rowsArray.current![activeRow][i];
       if (currLetter === DAILY_WORD[i]) {
         letterDiv.classList.add(letterVariants.correct);
         guessedLetters.push(currLetter);
@@ -83,6 +85,7 @@ const Letter = ({
     if (word.length < WORD_LENGTH) {
       feedbackRef.current!.innerText =
         "The word is less than 5 characters long";
+      feedbackRef.current?.classList.add(feedbackTextVariants.visible);
     } else {
       if (WORDS.includes(word.toLowerCase())) {
         evaluateGuess(arr);
@@ -91,43 +94,54 @@ const Letter = ({
           setPopup(POPUP_TEXT.LOSER);
         }
         arr = [];
-        rowsArray.current[activeRow + 1][0].click();
-        rowsArray.current[activeRow + 1][0].focus();
+        activeLetter(0, activeRow + 1);
       } else {
         feedbackRef.current!.innerText = "This is not a word";
+        feedbackRef.current?.classList.add(feedbackTextVariants.visible);
       }
     }
   };
 
   let { keyboardProps } = useKeyboard({
-    onKeyDown: (event: any) => {
+    onKeyDown: (event: KeyboardEvent) => {
       let currKey = event.key;
-
       if (currKey === "Enter") {
         handleEnterKey();
       } else if (currKey === "Backspace") {
-        feedbackRef.current!.innerText = "";
+        activeLetter(letterId, rowId);
+        feedbackRef.current?.classList.remove(feedbackTextVariants.visible);
+        return;
+      } else {
+        animate(scale, 0.9, { duration: 0.1 });
       }
     },
-    onKeyUp: (event: any) => {
+    onKeyUp: (event: KeyboardEvent) => {
       let currKey = event.key;
 
-      if (currKey === "Enter") return;
+      if (currKey === "Enter") {
+        return;
+      } else {
+        animate(scale, 1, { duration: 0.1 });
+      }
 
       if (currKey === "Backspace") {
-        const num = clamp(letterId - 1, 0, 4);
-        rowsArray.current[rowId][num].focus();
-        rowsArray.current[rowId][num].select();
+        activeLetter(letterId - 1, rowId);
       } else if (currKey !== "Tab") {
-        const num = clamp(letterId + 1, 0, 4);
-        rowsArray.current[rowId][num].focus();
-        rowsArray.current[rowId][num].select();
+        activeLetter(letterId + 1, rowId);
       }
     },
   });
 
   return (
-    <div className={clsx(letterInactive, { [letterActive]: isActiveRow })}>
+    <motion.div
+      style={{ scale }}
+      className={clsx(
+        letter,
+        { [letterVariants.noPointers]: !isActiveRow },
+        { [letterVariants.pointers]: isActiveRow },
+        "wrapper"
+      )}
+    >
       <input
         className={letterStyle}
         {...keyboardProps}
@@ -137,10 +151,10 @@ const Letter = ({
         maxLength={1}
         tabIndex={isActiveRow ? 0 : -1}
         ref={(el) => {
-          refToArray(el, rowsArray.current[rowId]);
+          refToArray(el, rowsArray.current![rowId]);
         }}
       ></input>
-    </div>
+    </motion.div>
   );
 };
 
