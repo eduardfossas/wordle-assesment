@@ -11,6 +11,7 @@ const reveal = keyframes({
 
 export const letterStyle = style({
   border: `2px solid ${vars.color.incorrect}`,
+  width: `${layoutToCssMobile(60)}vw`,
   height: `${layoutToCssMobile(60)}vw`,
   padding: `${layoutToCssMobile(15)}vw`,
   fontSize: `${layoutToCssMobile(24)}vw`,
@@ -31,6 +32,7 @@ export const letterStyle = style({
   textAlign: "center",
   "@media": {
     "screen and (min-width: 768px)": {
+      width: `${layoutToCss(60)}vw`,
       height: `${layoutToCss(60)}vw`,
       padding: `${layoutToCss(15)}vw`,
       fontSize: `${layoutToCss(24)}vw`,
