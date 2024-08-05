@@ -4,11 +4,10 @@ import { vars } from "app/styles/theme.css";
 export const dialogBackground = style({
   position: "fixed",
   inset: 0,
-  background: " rgba(0,0,0,0.5)",
+  background: " rgba(0,0,0,0.7)",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  backdropFilter: 'blur(5px)',
   zIndex: 10
 });
 
