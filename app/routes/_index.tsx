@@ -31,7 +31,7 @@ export default function Index() {
       ".wrapper",
       { rotateX: [-90, 0], opacity: [0, 1] },
       {
-        delay: stagger(0.025, { startDelay: 0.25 }),
+        delay: stagger(0.025),
         ease: "circInOut",
         duration: 2,
       }
