@@ -14,7 +14,7 @@ export const feedbackText = style({
   background: vars.color.text,
   padding: 10,
   borderRadius: 5,
-  color: 'black',
+  color: vars.color.bg_primary,
   fontSize: 15,
   opacity: 0,
   transform: 'translateY(-10px) translateZ(0)',

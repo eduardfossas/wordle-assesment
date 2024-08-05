@@ -40,6 +40,12 @@ export const letterStyle = style({
 
 export const letter = style({ transformOrigin: "bottom center" });
 
+const revealAnimation = {
+  color: vars.color.text_reveal,
+  transition: 'background-color 0s 250ms, border-color 0s 250ms',
+  animation: `${reveal} 500ms`,
+}
+
 export const letterVariants = styleVariants({
   active: { borderColor: vars.color.text },
   pointers: { pointerEvents: "all" },
@@ -47,20 +53,18 @@ export const letterVariants = styleVariants({
   correct: {
     backgroundColor: vars.color.correct,
     borderColor: vars.color.correct,
-    transition: 'background-color 0s 250ms, border-color 0s 250ms',
-    animation: `${reveal} 500ms`,
+    
+    ...revealAnimation,
   },
   incorrect: {
     backgroundColor: vars.color.incorrect,
     borderColor: vars.color.incorrect,
-    transition: 'background-color 0s 250ms, border-color 0s 250ms',
-    animation: `${reveal} 500ms`,
+    ...revealAnimation
   },
   misplaced: {
     backgroundColor: vars.color.misplaced,
     borderColor: vars.color.misplaced,
-    transition: 'background-color 0s 250ms, border-color 0s 250ms',
-    animation: `${reveal} 500ms`,
+    ...revealAnimation
   },
 });
 
