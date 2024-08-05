@@ -112,22 +112,19 @@ const Letter = ({
         activeLetter(letterId, rowId);
         feedbackRef.current?.classList.remove(feedbackTextVariants.visible);
         return;
-      } else {
+      } else if (currKey !== "Tab") {
         animate(scale, 0.9, { duration: 0.1 });
       }
     },
     onKeyUp: (event: KeyboardEvent) => {
       let currKey = event.key;
 
-      if (currKey === "Enter") {
-        return;
-      } else {
-        animate(scale, 1, { duration: 0.1 });
-      }
+      if (currKey === "Enter") return;
 
       if (currKey === "Backspace") {
         activeLetter(letterId - 1, rowId);
       } else if (currKey !== "Tab") {
+        animate(scale, 1, { duration: 0.1 });
         activeLetter(letterId + 1, rowId);
       }
     },
