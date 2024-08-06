@@ -26,13 +26,6 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const headers: HeadersFunction = ({ loaderHeaders }) => {
-  console.log(loaderHeaders.get("Cache-Control"));
-  return {
-    "Cache-Control": loaderHeaders.get("Cache-Control"),
-  };
-};
-
 export const loader: LoaderFunction = async ({ request }) => {
   const dataWords = await fetch(
     "https://random-word-api.herokuapp.com/word?length=5&number=20000"
