@@ -3,17 +3,13 @@ import { useKeyboard } from "react-aria";
 import { letterStyle, letterVariants, letter } from "./styles.css";
 import { refToArray } from "app/utils/react";
 import { clsx } from "clsx";
-import { WORDS } from "data/words";
 import { clamp } from "app/utils/math";
 import { POPUP_TEXT } from "data/text";
-import {
-  RowsArrayType,
-  RowsArrayTypeRef,
-  ArrayStringType,
-} from "types/elements";
+import { RowsArrayTypeRef, ArrayStringType } from "types/elements";
 import { animate, motion, useMotionValue } from "framer-motion";
-import { WORD_LENGTH, DAILY_WORD } from "constants/game";
+import { WORD_LENGTH } from "constants/game";
 import { feedbackTextVariants } from "../feedback/styles.css";
+import { AppDataType } from "types/data";
 
 type Props = {
   rowsArray: RowsArrayTypeRef;
@@ -23,6 +19,7 @@ type Props = {
   feedbackRef: RefObject<HTMLElement>;
   setActiveRow: Function;
   setPopup: Function;
+  appData: AppDataType;
 };
 
 const Letter = ({
@@ -33,6 +30,7 @@ const Letter = ({
   feedbackRef,
   setActiveRow,
   setPopup,
+  appData,
 }: Props) => {
   const isActiveRow = rowId === activeRow;
   const scale = useMotionValue(1);
@@ -51,12 +49,12 @@ const Letter = ({
     arr.map((el, i) => {
       const currLetter = el.toLowerCase();
       const letterDiv = rowsArray.current![activeRow][i];
-      if (currLetter === DAILY_WORD[i]) {
+      if (currLetter === appData.selectedWord[i]) {
         letterDiv.classList.add(letterVariants.correct);
         guessedLetters.push(currLetter);
         correctLeters.push(currLetter);
       } else if (
-        DAILY_WORD.includes(currLetter) &&
+        appData.selectedWord.includes(currLetter) &&
         !guessedLetters.includes(currLetter)
       ) {
         letterDiv.classList.add(letterVariants.misplaced);
@@ -87,7 +85,7 @@ const Letter = ({
         "The word is less than 5 characters long";
       feedbackRef.current?.classList.add(feedbackTextVariants.visible);
     } else {
-      if (WORDS.includes(word.toLowerCase())) {
+      if (appData.words.includes(word.toLowerCase())) {
         evaluateGuess(arr);
         setActiveRow((prev: number) => prev + 1);
         if (activeRow === 4) {

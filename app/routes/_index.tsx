@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import { json, type LoaderFunction, type MetaFunction } from "@remix-run/node";
 import { Word } from "app/components/word";
 import { useEffect, useRef, useState } from "react";
 import { appStyle } from "app/styles/app.css";
@@ -8,6 +8,8 @@ import { DialogType } from "types/elements";
 import { stagger, animate, AnimatePresence } from "framer-motion";
 import { letterVariants } from "app/components/letter/styles.css";
 import { RowsArrayType } from "types/elements";
+import { useLoaderData } from "@remix-run/react";
+import { AppDataType } from "types/data";
 
 export const meta: MetaFunction = () => {
   return [
@@ -19,7 +21,31 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export const loader: LoaderFunction = async ({ request }) => {
+  const dataWords = await fetch(
+    "https://random-word-api.herokuapp.com/word?length=5&number=20000"
+  );
+  const dataSelectedWord = await fetch(
+    "https://random-word-api.herokuapp.com/word?length=5"
+  );
+  const words = await dataWords.json();
+  const selectedWord = await dataSelectedWord.json();
+
+  const response = await Promise.all([words, selectedWord]);
+
+  return json(
+    { words: response[0], selectedWord: response[1][0] },
+    {
+      headers: {
+        "Cache-Control": "max-age=86400",
+      },
+    }
+  );
+};
+
 export default function Index() {
+  const data = useLoaderData<AppDataType>();
+  console.log(data.selectedWord);
   const appRef = useRef<HTMLDivElement>(null);
   const rowsArray = useRef<RowsArrayType>([[], [], [], [], []]);
   const [activeRow, setActiveRow] = useState<number>(0);
@@ -60,6 +86,7 @@ export default function Index() {
         <div>
           {rowsArray.current.map((el: Array<HTMLInputElement>, key: number) => (
             <Word
+              appData={data}
               activeRow={activeRow}
               rowsArray={rowsArray}
               feedbackRef={feedbackRef}
