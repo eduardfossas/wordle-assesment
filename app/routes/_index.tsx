@@ -28,10 +28,10 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const dataWords = await fetch(
-    "https://random-word-api.herokuapp.com/word?length=5&number=20000"
+    "https://random-word-api.herokuapp.com/word?length=5&number=20000&lang=en"
   );
   const dataSelectedWord = await fetch(
-    "https://random-word-api.herokuapp.com/word?length=5"
+    "https://random-word-api.herokuapp.com/word?length=5&lang=en"
   );
   const words = await dataWords.json();
   const selectedWord = await dataSelectedWord.json();
