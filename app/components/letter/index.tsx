@@ -47,25 +47,35 @@ const Letter = ({
   };
 
   const evaluateGuess = (arr: ArrayStringType) => {
+    const letters = [] as Array<{
+      letter: string;
+      status: "correct" | "misplaced" | "incorrect";
+    }>;
     const guessedLetters = [] as ArrayStringType;
     const correctLeters = [] as ArrayStringType;
 
     arr.map((el, i) => {
       const currLetter = el.toLowerCase();
-      const letterDiv = rowsArray.current![activeRow][i];
       if (currLetter === appData.selectedWord[i]) {
-        letterDiv.classList.add(letterVariants.correct);
-        guessedLetters.push(currLetter);
+        letters.push({ letter: currLetter, status: "correct" });
         correctLeters.push(currLetter);
+        guessedLetters.push(currLetter);
       } else if (
         appData.selectedWord.includes(currLetter) &&
         !guessedLetters.includes(currLetter)
       ) {
-        letterDiv.classList.add(letterVariants.misplaced);
-        guessedLetters.push(currLetter);
+        letters.push({ letter: currLetter, status: "misplaced" });
       } else {
-        letterDiv.classList.add(letterVariants.incorrect);
+        letters.push({ letter: currLetter, status: "incorrect" });
       }
+    });
+
+    letters.map(({ letter, status }, i) => {
+      const letterDiv = rowsArray.current![activeRow][i];
+      if (correctLeters.includes(letter) && status === "misplaced")
+        status = "incorrect";
+
+      letterDiv.classList.add(letterVariants[`${status}`]);
     });
 
     if (correctLeters.length === 5) {
